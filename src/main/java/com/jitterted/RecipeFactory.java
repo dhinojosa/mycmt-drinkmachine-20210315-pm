@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RecipeFactory {
-  private final Map<IngredientName, Ingredient> nameToIngredient = new HashMap<>();
+  private final Map<IngredientName, Ingredient> nameToIngredient = new HashMap<>(); //OK
 
   public RecipeFactory(List<Ingredient> ingredientList) {
     for (Ingredient ingredient : ingredientList) {
