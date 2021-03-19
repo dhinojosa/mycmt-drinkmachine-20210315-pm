@@ -3,7 +3,7 @@ package com.jitterted;
 public class Ingredient implements Comparable<Ingredient> {
     private final IngredientName name;
     private final double cost; //Dollars, Units, Bitcoin, Rupies, Pounds?
-    private InventoryLevel stock = new InventoryLevel(0); //0? Items? InventoryLevel
+    private InventoryLevel stock = new InventoryLevel(0);
 
     public Ingredient(IngredientName name, double cost) {
         this(name, cost, 10);

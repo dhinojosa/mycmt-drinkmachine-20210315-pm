@@ -11,49 +11,14 @@ import static com.jitterted.IngredientName.*;
 
 public class DrinkMachine {
 
-    private final List<Drink> drinkList = new ArrayList<>(); //Maybe this is too much?
-    private final List<Ingredient> ingredientList = new ArrayList<>(); //Maybe this is too much?
+    private final List<Ingredient> ingredientList = new ArrayList<>();
+    private final Drinks drinks = new Drinks();
 
     public DrinkMachine() {
         initializeIngredientList();
-        initializeDrinkList();
-        updateDrinkList();
-        updateMakeable();
-    }
-
-    private void updateDrinkList() {
-        for (Drink drink : drinkList) {
-            drink.setCost(computeCost(drink));
-        }
-    }
-
-    private double computeCost(final Drink drink) {
-        double cost = 0;
-        Recipe recipe = drink.getRecipe();
-        for (Ingredient ingredient : ingredientList) {
-            if (recipe.hasIngredient(ingredient)) {
-                cost += ingredient.getCost() * recipe.quantityNeededFor(ingredient);
-            }
-        }
-        return cost;
-    }
-
-    private void initializeDrinkList() {
-        RecipeFactory recipeFactory = new RecipeFactory(ingredientList);
-        drinkList.add(new Drink("Coffee", recipeFactory.create("Coffee",
-            "Coffee", "Coffee", "Sugar", "Cream")));
-        drinkList.add(new Drink("Decaf Coffee", recipeFactory.create("Decaf " +
-            "Coffee", "Decaf Coffee", "Decaf Coffee", "Sugar", "Cream")));
-        drinkList.add(new Drink("Caffe Latte", recipeFactory.create("Espresso"
-            , "Espresso", "Steamed Milk")));
-        drinkList.add(new Drink("Caffe Americano", recipeFactory.create(
-            "Espresso", "Espresso", "Espresso")));
-        drinkList.add(new Drink("Caffe Mocha", recipeFactory.create("Espresso"
-            , "Cocoa", "Steamed Milk", "Whipped Cream")));
-        drinkList.add(new Drink("Cappuccino", recipeFactory.create("Espresso"
-            , "Espresso", "Steamed Milk", "Foamed Milk")));
-
-        Collections.sort(drinkList);
+        drinks.initializeDrinkList(ingredientList);
+        drinks.updateDrinkList(ingredientList);
+        drinks.updateMakeable();
     }
 
     private void initializeIngredientList() {
@@ -99,9 +64,9 @@ public class DrinkMachine {
             System.exit(0);
         } else if (userRestocked(input)) {
             restockIngredients();
-            updateMakeable();
-        } else if (Integer.parseInt(input) > 0 && Integer.parseInt(input) <= drinkList.size()) {
-            makeDrink(drinkList.get(Integer.parseInt(input) - 1));
+            drinks.updateMakeable();
+        } else if (drinks.isValidSelection(input)) {
+            makeDrink(drinks.drinkChoice(input));
         } else {
             System.out.println("'" + input + "' was not valid. Choose" +
                 " from list above, or Q or R.");
@@ -118,17 +83,7 @@ public class DrinkMachine {
 
     public void displayInventoryAndMenu() {
         displayInventory();
-        displayDrinkMenu();
-    }
-
-    private void displayDrinkMenu() {
-        System.out.println("\nDrink Menu:\n");
-        int count = 1;
-        for (Drink d : drinkList) {
-            System.out.printf("%d,%s,$%.2f," + d.getMakeable() + "\n\n",
-                count, d.getName(), d.getCost());
-            count++;
-        }
+        drinks.displayDrinkMenu();
     }
 
     private void displayInventory() {
@@ -140,7 +95,7 @@ public class DrinkMachine {
 
     public void makeDrink(Drink drink) {
         dispenseDrink(drink);
-        updateMakeable();
+        drinks.updateMakeable();
         displayInventoryAndMenu();
     }
 
@@ -162,14 +117,8 @@ public class DrinkMachine {
         for (Ingredient ingredient : ingredientList) {
             ingredient.refillStockFor();
         }
-        updateMakeable();
+        drinks.updateMakeable();
         displayInventoryAndMenu();
-    }
-
-    private void updateMakeable() {
-        for (Drink drink : drinkList) {
-            drink.updateDrinkState();
-        }
     }
 
 }
